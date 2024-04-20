@@ -1,11 +1,11 @@
 /**
  * @file apps.h
- * @author Forairaaaaa
+ * @author Forairaaaaa, basicx-StrgV
  * @brief
  * @version 0.1
- * @date 2023-09-19
+ * @date 2024-04-20
  *
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2024
  *
  */
 #pragma once
@@ -19,3 +19,4 @@
 #include "app_timer/app_timer.h"
 #include "app_keyboard/app_keyboard.h"
 #include "app_texteditor/app_texteditor.h"
+#include "app_duckling/app_duckling.h"
