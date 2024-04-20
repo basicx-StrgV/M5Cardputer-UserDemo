@@ -1,12 +1,12 @@
 /**
  * @file apps.h
  * @author Forairaaaaa
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2023-09-19
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 #pragma once
 #include "launcher/launcher.h"
@@ -19,4 +19,3 @@
 #include "app_timer/app_timer.h"
 #include "app_keyboard/app_keyboard.h"
 #include "app_texteditor/app_texteditor.h"
-#include "app_hello/app_hello.h"
