@@ -1,18 +1,18 @@
 /**
  * @file usb_keyboard.cpp
- * @author Forairaaaaa
+ * @author Forairaaaaa, basicx-StrgV
  * @brief
  * @version 0.1
- * @date 2023-12-11
+ * @date 2024-04-20
  *
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2024
  *
  */
-#include "../app_keyboard.h"
+#include "../../app_keyboard/app_keyboard.h"
 #include "../../app_duckling/app_duckling.h"
 #include "spdlog/spdlog.h"
-#include "../../utils/theme/theme_define.h"
-#include "../../utils/usb_keyboard_wrap/usb_keyboard_wrap.h"
+#include "../theme/theme_define.h"
+#include "usb_keyboard_wrap.h"
 
 using namespace MOONCAKE::APPS;
 
