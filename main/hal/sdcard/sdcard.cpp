@@ -1,12 +1,12 @@
 /**
  * @file sdcard.cpp
- * @author Anderson Antunes
- * @brief 
+ * @author Anderson Antunes, basicx-StrgV
+ * @brief
  * @version 0.1
- * @date 2024-01-14
+ * @date 2024-04-21
  *
  * @copyright Copyright (c) 2024
- * 
+ *
  */
 #include <string.h>
 #include <sys/unistd.h>
@@ -17,17 +17,20 @@
 #include "esp_vfs_fat.h"
 #include "sdmmc_cmd.h"
 #include "sdcard.h"
+#include "spdlog/spdlog.h"
 
 #define PIN_NUM_MISO 39
 #define PIN_NUM_MOSI 14
-#define PIN_NUM_CLK  40
-#define PIN_NUM_CS   GPIO_NUM_12
+#define PIN_NUM_CLK 40
+#define PIN_NUM_CS GPIO_NUM_12
 
 static const char *MOUNT_POINT = "/sdcard";
 static const char *TAG = "SDCARD";
 
-bool SDCard::mount(bool format_if_mount_failed) {
-    if (mounted) {
+bool SDCard::mount(bool format_if_mount_failed)
+{
+    if (mounted)
+    {
         ESP_LOGI(TAG, "SD card already mounted");
         return true;
     }
@@ -45,12 +48,13 @@ bool SDCard::mount(bool format_if_mount_failed) {
     bus_cfg.data5_io_num = -1,
     bus_cfg.data6_io_num = -1,
     bus_cfg.data7_io_num = -1,
-    bus_cfg.max_transfer_sz = 4000; 
+    bus_cfg.max_transfer_sz = 4000;
     bus_cfg.flags = (SPICOMMON_BUSFLAG_SCLK | SPICOMMON_BUSFLAG_MOSI);
-    bus_cfg.intr_flags = 0; 
+    bus_cfg.intr_flags = 0;
 
     ret = spi_bus_initialize(SPI3_HOST, &bus_cfg, SDSPI_DEFAULT_DMA);
-    if (ret != ESP_OK) {
+    if (ret != ESP_OK)
+    {
         ESP_LOGE(TAG, "Failed to initialize bus.");
         return false;
     }
@@ -62,11 +66,11 @@ bool SDCard::mount(bool format_if_mount_failed) {
     esp_vfs_fat_sdmmc_mount_config_t mount_config = {
         .format_if_mount_failed = format_if_mount_failed,
         .max_files = 5,
-        .allocation_unit_size = 16 * 1024
-    };
+        .allocation_unit_size = 16 * 1024};
 
     ret = esp_vfs_fat_sdspi_mount(MOUNT_POINT, &host, &slot_config, &mount_config, &card);
-    if (ret != ESP_OK) {
+    if (ret != ESP_OK)
+    {
         card = nullptr;
         spi_bus_free(SPI3_HOST);
         ESP_LOGE(TAG, "Failed to mount filesystem.");
@@ -78,13 +82,16 @@ bool SDCard::mount(bool format_if_mount_failed) {
     return true;
 }
 
-bool SDCard::eject() {
-    if (!mounted) {
+bool SDCard::eject()
+{
+    if (!mounted)
+    {
         ESP_LOGI(TAG, "SD card not mounted");
         return true;
     }
     esp_err_t ret = esp_vfs_fat_sdcard_unmount(MOUNT_POINT, card);
-    if (ret != ESP_OK) {
+    if (ret != ESP_OK)
+    {
         ESP_LOGE(TAG, "Failed to unmount SD card");
         return false;
     }
@@ -95,27 +102,36 @@ bool SDCard::eject() {
     return true;
 }
 
-bool SDCard::is_mounted() {
+bool SDCard::is_mounted()
+{
     return mounted;
 }
 
-char *SDCard::get_mount_point() {
-    char *mount_point = (char*)malloc(strlen(MOUNT_POINT) + 1);
+char *SDCard::get_mount_point()
+{
+    char *mount_point = (char *)malloc(strlen(MOUNT_POINT) + 1);
     strcpy(mount_point, MOUNT_POINT);
     return mount_point;
 }
 
-char *SDCard::get_filepath(const char *path) {
+char *SDCard::get_filepath(const char *path)
+{
     int len = strlen(MOUNT_POINT) + strlen(path) + 2;
     ESP_LOGI(TAG, "get_filepath: %d", len);
-    char *full_path = (char*)malloc(len);
+    char *full_path = (char *)malloc(len);
     strcpy(full_path, MOUNT_POINT);
     strcat(full_path, "/");
     strcat(full_path, path);
     return full_path;
 }
 
-bool SDCard::file_exists(const char *path) {
+bool SDCard::file_exists(const char *path)
+{
     struct stat st;
     return stat(path, &st) == 0;
+}
+
+bool SDCard::createDir(const char *path)
+{
+    return mkdir(path, 0777) == 0;
 }

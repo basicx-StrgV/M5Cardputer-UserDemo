@@ -39,14 +39,13 @@ namespace MOONCAKE
             {
                 HAL::Hal *hal = nullptr;
                 int last_key_num = 0;
-                int lines = 1;
                 std::string text_buffer;
-                uint32_t cursor_update_time_count = 0;
-                uint32_t cursor_update_period = 500;
-                bool cursor_state = false;
                 bool waiting_user_input = false;
                 bool can_skip = false;
                 DialogAction_t dialog_action = DialogAction_t::none;
+                bool has_working_dir = true;
+                // Language
+                std::string kb_lang_file = "DEFAULT";
                 // Keyboard
                 uint32_t update_infos_time_count = 0;
                 uint32_t update_kb_time_count = 0;
@@ -55,8 +54,9 @@ namespace MOONCAKE
             Data_t _data;
 
             void _update_input();
-            void _update_cursor();
             void _dialog(const std::string &message, bool can_skip);
+            // Language
+            void _select_kb_lang();
             // Keyboard
             void _select_kb_type();
             void _ble_kb_init();
