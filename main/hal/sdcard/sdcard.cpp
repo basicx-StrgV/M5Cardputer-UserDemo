@@ -133,12 +133,12 @@ bool SDCard::file_exists(const char *path)
     return stat(path, &st) == 0;
 }
 
-bool SDCard::createDir(const char *path)
+bool SDCard::create_dir(const char *path)
 {
     return mkdir(path, 0777) == 0;
 }
 
-std::list<std::string> SDCard::getDirContent(const char *path)
+std::list<std::string> SDCard::get_dir_content(const char *path)
 {
     std::list<std::string> filelist = {};
 

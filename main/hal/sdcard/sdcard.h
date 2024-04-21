@@ -23,8 +23,8 @@ public:
 	char *get_mount_point();
 	char *get_filepath(const char *path);
 	bool file_exists(const char *path);
-	bool createDir(const char *path);
-	std::list<std::string> getDirContent(const char *path);
+	bool create_dir(const char *path);
+	std::list<std::string> get_dir_content(const char *path);
 
 private:
 	sdmmc_card_t *card = nullptr;

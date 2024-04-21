@@ -58,7 +58,7 @@ void AppDuckling::onResume()
             spdlog::info("duckling folder not found, trying to create folder");
 
             // Try to create working dir
-            if (_sdcard->createDir(duckling_folder_path))
+            if (_sdcard->create_dir(duckling_folder_path))
             {
                 spdlog::info("duckling folder created succefully");
             }
@@ -73,7 +73,7 @@ void AppDuckling::onResume()
         // Init if working dir exists
         if (_data.has_working_dir)
         {
-            std::list<std::string> file_list = _sdcard->getDirContent(duckling_folder_path);
+            std::list<std::string> file_list = _sdcard->get_dir_content(duckling_folder_path);
 
             //  Get language definition files
             for (std::string const &i : file_list)
