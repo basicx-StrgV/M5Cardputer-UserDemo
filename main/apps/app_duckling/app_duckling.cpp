@@ -78,11 +78,13 @@ void AppDuckling::onResume()
             //  Get language definition files
             for (std::string const &i : file_list)
             {
-                if (i.length() > 5)
-                {
-                    std::string file_type = i.substr(i.length() - 5, 5);
+                size_t extension_start_pos = i.find_last_of(".");
 
-                    if (file_type == ".json")
+                if (extension_start_pos != std::string::npos)
+                {
+                    std::string file_type = i.substr(extension_start_pos + 1);
+
+                    if (file_type == "json")
                     {
                         _data.lang_file_list.push_back(i);
                     }
