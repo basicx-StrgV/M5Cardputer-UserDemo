@@ -11,6 +11,7 @@
 #ifndef SD_CARD_MANAGER_H
 #define SD_CARD_MANAGER_H
 
+#include <list>
 #include "driver/sdmmc_host.h"
 
 class SDCard
@@ -23,6 +24,7 @@ public:
 	char *get_filepath(const char *path);
 	bool file_exists(const char *path);
 	bool createDir(const char *path);
+	std::list<std::string> getDirContent(const char *path);
 
 private:
 	sdmmc_card_t *card = nullptr;

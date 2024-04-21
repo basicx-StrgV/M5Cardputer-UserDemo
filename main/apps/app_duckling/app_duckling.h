@@ -43,7 +43,9 @@ namespace MOONCAKE
                 bool waiting_user_input = false;
                 bool can_skip = false;
                 DialogAction_t dialog_action = DialogAction_t::none;
+                // Working dir
                 bool has_working_dir = true;
+                std::list<std::string> lang_file_list;
                 // Language
                 std::string kb_lang_file = "DEFAULT";
                 // Keyboard

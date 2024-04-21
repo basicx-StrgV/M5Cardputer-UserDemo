@@ -8,6 +8,8 @@
  * @copyright Copyright (c) 2024
  *
  */
+#include <list>
+#include <string>
 #include "app_duckling.h"
 #include "spdlog/spdlog.h"
 #include "../utils/theme/theme_define.h"
@@ -48,15 +50,15 @@ void AppDuckling::onResume()
     {
         spdlog::info("SD card mounted");
 
-        char *ducklingFolderPath = _sdcard->get_filepath("duckling");
+        char *duckling_folder_path = _sdcard->get_filepath("duckling");
 
         // Check if workin dir exist
-        if (!_sdcard->file_exists(ducklingFolderPath))
+        if (!_sdcard->file_exists(duckling_folder_path))
         {
             spdlog::info("duckling folder not found, trying to create folder");
 
             // Try to create working dir
-            if (_sdcard->createDir(ducklingFolderPath))
+            if (_sdcard->createDir(duckling_folder_path))
             {
                 spdlog::info("duckling folder created succefully");
             }
@@ -71,6 +73,22 @@ void AppDuckling::onResume()
         // Init if working dir exists
         if (_data.has_working_dir)
         {
+            std::list<std::string> file_list = _sdcard->getDirContent(duckling_folder_path);
+
+            //  Get language definition files
+            for (std::string const &i : file_list)
+            {
+                if (i.length() > 5)
+                {
+                    std::string file_type = i.substr(i.length() - 5, 5);
+
+                    if (file_type == ".json")
+                    {
+                        _data.lang_file_list.push_back(i);
+                    }
+                }
+            }
+
             _select_kb_lang();
 
             spdlog::info("Language selected: {}", _data.kb_lang_file);
@@ -87,7 +105,7 @@ void AppDuckling::onResume()
             _dialog("Working directory 'duckling' does not exist", false);
         }
 
-        free(ducklingFolderPath);
+        free(duckling_folder_path);
     }
     _canvas_update();
 }

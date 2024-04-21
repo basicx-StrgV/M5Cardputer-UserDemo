@@ -8,7 +8,10 @@
  * @copyright Copyright (c) 2024
  *
  */
+#include <list>
+#include <string>
 #include <string.h>
+#include <dirent.h>
 #include <sys/unistd.h>
 #include <sys/stat.h>
 #include "esp_log.h"
@@ -17,7 +20,6 @@
 #include "esp_vfs_fat.h"
 #include "sdmmc_cmd.h"
 #include "sdcard.h"
-#include "spdlog/spdlog.h"
 
 #define PIN_NUM_MISO 39
 #define PIN_NUM_MOSI 14
@@ -134,4 +136,22 @@ bool SDCard::file_exists(const char *path)
 bool SDCard::createDir(const char *path)
 {
     return mkdir(path, 0777) == 0;
+}
+
+std::list<std::string> SDCard::getDirContent(const char *path)
+{
+    std::list<std::string> filelist = {};
+
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir(path)) != NULL)
+    {
+        while ((ent = readdir(dir)) != NULL)
+        {
+            filelist.push_back(ent->d_name);
+        }
+        closedir(dir);
+    }
+
+    return filelist;
 }

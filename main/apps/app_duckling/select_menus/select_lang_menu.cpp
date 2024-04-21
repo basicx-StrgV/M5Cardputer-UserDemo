@@ -8,6 +8,8 @@
  * @copyright Copyright (c) 2024
  *
  */
+#include <list>
+#include <string>
 #include "../app_duckling.h"
 #include "spdlog/spdlog.h"
 #include "../../utils/theme/theme_define.h"
@@ -34,11 +36,15 @@ void AppDuckling::_select_kb_lang()
     std::vector<SelectLang_t> item_list;
 
     // Default lang
-    item_list.push_back(SelectLang_t("DEFAULT", 0, 15));
+    item_list.push_back(SelectLang_t("DEFAULT", 0, 17));
 
-    // TODO: List will be build from definition files
-    item_list.push_back(SelectLang_t("ENG", 0, 30));
-    item_list.push_back(SelectLang_t("DE", 0, 45));
+    int entryCounter = 1;
+    for (std::string const &i : _data.lang_file_list)
+    {
+        entryCounter++;
+        // Place item on an interval of "17"
+        item_list.push_back(SelectLang_t(i, 0, (17 * entryCounter)));
+    }
 
     while (1)
     {
