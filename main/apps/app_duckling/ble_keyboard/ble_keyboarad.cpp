@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2024
  *
  */
-// #include "../app_duckling.h"
+#include "../app_duckling.h"
 #include "spdlog/spdlog.h"
 #include "../../utils/theme/theme_define.h"
 #include "../../utils/ble_keyboard_wrap/ble_keyboard_wrap.h"

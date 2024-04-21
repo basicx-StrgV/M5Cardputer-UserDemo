@@ -59,12 +59,12 @@ namespace MOONCAKE
             void _dialog(const std::string &message, bool can_skip);
             // Keyboard
             void _select_kb_type();
-            /*void _ble_kb_init();
+            void _ble_kb_init();
             void _ble_kb_update_infos();
             void _ble_kb_update_kb_input();
             void _usb_kb_init();
             void _usb_kb_update_infos();
-            void _usb_kb_update_kb_input();*/
+            void _usb_kb_update_kb_input();
 
         public:
             void onCreate() override;
