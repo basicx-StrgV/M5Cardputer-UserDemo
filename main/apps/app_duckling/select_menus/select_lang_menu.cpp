@@ -35,15 +35,13 @@ void AppDuckling::_select_kb_lang()
     bool is_select_change = true;
     std::vector<SelectLang_t> item_list;
 
-    // Default lang
-    item_list.push_back(SelectLang_t("DEFAULT", 0, 17));
-
     int entryCounter = 1;
     for (std::string const &i : _data.lang_file_list)
     {
-        entryCounter++;
         // Place item on an interval of "17"
         item_list.push_back(SelectLang_t(i, 0, (17 * entryCounter)));
+
+        entryCounter++;
     }
 
     while (1)

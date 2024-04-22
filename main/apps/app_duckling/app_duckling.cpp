@@ -50,15 +50,15 @@ void AppDuckling::onResume()
     {
         spdlog::info("SD card mounted");
 
-        char *duckling_folder_path = _sdcard->get_filepath("duckling");
+        _data.working_dir = _sdcard->get_filepath("duckling");
 
         // Check if workin dir exist
-        if (!_sdcard->file_exists(duckling_folder_path))
+        if (!_sdcard->file_exists(_data.working_dir.c_str()))
         {
             spdlog::info("duckling folder not found, trying to create folder");
 
             // Try to create working dir
-            if (_sdcard->create_dir(duckling_folder_path))
+            if (_sdcard->create_dir(_data.working_dir.c_str()))
             {
                 spdlog::info("duckling folder created succefully");
             }
@@ -73,7 +73,7 @@ void AppDuckling::onResume()
         // Init if working dir exists
         if (_data.has_working_dir)
         {
-            std::list<std::string> file_list = _sdcard->get_dir_content(duckling_folder_path);
+            std::list<std::string> file_list = _sdcard->get_dir_content(_data.working_dir.c_str());
 
             //  Get language definition files
             for (std::string const &i : file_list)
@@ -95,6 +95,24 @@ void AppDuckling::onResume()
 
             spdlog::info("Language selected: {}", _data.kb_lang_file);
 
+            // Load lang definition from selected file
+            std::string langFilePath = (_data.working_dir + "/" + _data.kb_lang_file);
+
+            std::string fileContent;
+
+            // Read file content
+            FILE *f = fopen(langFilePath.c_str(), "r");
+            if (f != NULL)
+            {
+                char text[100];
+                while (fgets(text, 80, f))
+                {
+                    fileContent += text;
+                }
+            }
+
+            _data.lang.load(fileContent);
+
             _select_kb_type();
 
             if (_data.kb_type == kb_type_ble)
@@ -106,8 +124,6 @@ void AppDuckling::onResume()
         {
             _dialog("Working directory 'duckling' does not exist", false);
         }
-
-        free(duckling_folder_path);
     }
     _canvas_update();
 }
@@ -124,15 +140,19 @@ void AppDuckling::onRunning()
         destroyApp();
     }
 
-    if (_data.has_working_dir && _data.kb_type == kb_type_ble)
+    if (_data.has_working_dir)
     {
-        _ble_kb_update_infos();
-        _ble_kb_update_kb_input();
-    }
-    else if (_data.has_working_dir && _data.kb_type == kb_type_usb)
-    {
-        _usb_kb_update_infos();
-        _usb_kb_update_kb_input();
+
+        if (_data.kb_type == kb_type_ble)
+        {
+            _ble_kb_update_infos();
+            _ble_kb_update_kb_input();
+        }
+        else if (_data.kb_type == kb_type_usb)
+        {
+            _usb_kb_update_infos();
+            _usb_kb_update_kb_input(0x00, 0x00);
+        }
     }
 }
 

@@ -14,6 +14,7 @@
 #include "../utils/theme/theme_define.h"
 #include "../utils/anim/anim_define.h"
 #include "../utils/icon/icon_define.h"
+#include "../utils/lang_definition/lang_definition.hpp"
 
 #include "assets/duckling_big.h"
 #include "assets/duckling_small.h"
@@ -45,9 +46,11 @@ namespace MOONCAKE
                 DialogAction_t dialog_action = DialogAction_t::none;
                 // Working dir
                 bool has_working_dir = true;
+                std::string working_dir;
                 std::list<std::string> lang_file_list;
                 // Language
-                std::string kb_lang_file = "DEFAULT";
+                std::string kb_lang_file = "";
+                DUCKLING::LANGUAGE::LangDefinition lang;
                 // Keyboard
                 uint32_t update_infos_time_count = 0;
                 uint32_t update_kb_time_count = 0;
@@ -66,7 +69,7 @@ namespace MOONCAKE
             void _ble_kb_update_kb_input();
             void _usb_kb_init();
             void _usb_kb_update_infos();
-            void _usb_kb_update_kb_input();
+            void _usb_kb_update_kb_input(uint8_t key, uint8_t modifier = 0x00);
 
         public:
             void onCreate() override;

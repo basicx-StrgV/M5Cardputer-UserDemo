@@ -177,63 +177,20 @@ void AppKeyboard::_usb_kb_update_kb_input()
     }
 }
 
-void AppDuckling::_usb_kb_update_kb_input()
+void AppDuckling::_usb_kb_update_kb_input(uint8_t key, uint8_t modifier)
 {
     if (_current_state != _state_mounted)
         return;
 
     if (millis() - _data.update_kb_time_count > 10)
     {
-        if (_data.hal->keyboard()->isChanged())
-        {
-            uint8_t modifier = 0;
-            if (_data.hal->keyboard()->isPressed())
-            {
-                memset(_input_buffer, 0, 6);
-                auto status = _data.hal->keyboard()->keysState();
+        memset(_input_buffer, 0, 6);
 
-                int count = 0;
-                for (auto &i : status.hidKey)
-                {
-                    if (count < 5)
-                    {
-                        _input_buffer[1 + count] = i;
-                        count++;
-                    }
-                }
+        // Buffer [0] is for modifier and [1] - [5] for other keys
+        _input_buffer[0] = modifier;
+        _input_buffer[1] = key;
 
-                if (status.ctrl)
-                {
-                    // ESP_LOGI(TAG, "CONTROL");
-                    // modifier |= 0x01;
-                    modifier |= 0xE0;
-                }
-
-                if (status.shift || _data.hal->keyboard()->capslocked())
-                {
-                    // ESP_LOGI(TAG, "SHIFT");
-                    // modifier |= 0x02;
-                    modifier |= 0xE1;
-                }
-
-                if (status.alt)
-                {
-                    // ESP_LOGI(TAG, "ALT");
-                    // modifier |= 0x03;
-                    modifier |= 0xE2;
-                }
-
-                _input_buffer[0] = modifier;
-
-                // ESP_LOG_BUFFER_HEX(TAG, buffer, 8);
-                usb_kb_wrap_report(_input_buffer);
-            }
-            else
-            {
-                memset(_input_buffer, 0, 6);
-                usb_kb_wrap_report(_input_buffer);
-            }
-        }
+        usb_kb_wrap_report(_input_buffer);
 
         _data.update_kb_time_count = millis();
     }
