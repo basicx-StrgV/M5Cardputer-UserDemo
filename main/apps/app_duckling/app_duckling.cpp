@@ -91,7 +91,9 @@ void AppDuckling::onResume()
                 }
             }
 
-            _select_kb_lang();
+            // Show lang selection; Cancel app if no selection was made
+            if (!_select_kb_lang())
+                return;
 
             spdlog::info("Language selected: {}", _data.kb_lang_file);
 
@@ -111,9 +113,12 @@ void AppDuckling::onResume()
                 }
             }
 
+            // Load language definition from file
             _data.lang.load(fileContent);
 
-            _select_kb_type();
+            // Show keyboard selection; Cancel app if no selection was made
+            if (!_select_kb_type())
+                return;
 
             if (_data.kb_type == kb_type_ble)
                 _ble_kb_init();

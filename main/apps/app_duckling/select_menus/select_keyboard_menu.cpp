@@ -27,7 +27,7 @@ struct SelectKeyboard_t
     }
 };
 
-void AppDuckling::_select_kb_type()
+bool AppDuckling::_select_kb_type()
 {
     int8_t selected = 0;
     bool is_select_change = true;
@@ -35,11 +35,23 @@ void AppDuckling::_select_kb_type()
     item_list.push_back(SelectKeyboard_t("BLE Keyboard", 0, 32));
     item_list.push_back(SelectKeyboard_t("USB Keyboard", 0, 56));
 
-    while (1)
+    bool showSelection = true;
+
+    while (showSelection)
     {
         // Update select
         _data.hal->keyboard()->updateKeyList();
         _data.hal->keyboard()->updateKeysState();
+
+        if (_data.hal->homeButton()->pressed())
+        {
+            _data.hal->playNextSound();
+            spdlog::info("quit duckling");
+
+            showSelection = false;
+
+            destroyApp();
+        }
 
         if (_data.hal->keyboard()->isKeyPressing(55) || _data.hal->keyboard()->isKeyPressing(54))
         {
@@ -115,4 +127,7 @@ void AppDuckling::_select_kb_type()
 
     spdlog::info("selected {}", item_list[selected].tag);
     _data.kb_type = static_cast<KeyboardType_t>(selected);
+
+    // Return if a selection was made; If false is returned the selection was canceled
+    return showSelection;
 }

@@ -29,7 +29,7 @@ struct SelectLang_t
     }
 };
 
-void AppDuckling::_select_kb_lang()
+bool AppDuckling::_select_kb_lang()
 {
     int8_t selected = 0;
     bool is_select_change = true;
@@ -44,11 +44,23 @@ void AppDuckling::_select_kb_lang()
         entryCounter++;
     }
 
-    while (1)
+    bool showSelection = true;
+
+    while (showSelection)
     {
         // Update select
         _data.hal->keyboard()->updateKeyList();
         _data.hal->keyboard()->updateKeysState();
+
+        if (_data.hal->homeButton()->pressed())
+        {
+            _data.hal->playNextSound();
+            spdlog::info("quit duckling");
+
+            showSelection = false;
+
+            destroyApp();
+        }
 
         if (_data.hal->keyboard()->isKeyPressing(55) || _data.hal->keyboard()->isKeyPressing(54))
         {
@@ -124,4 +136,7 @@ void AppDuckling::_select_kb_lang()
 
     spdlog::info("selected {}", item_list[selected].tag);
     _data.kb_lang_file = item_list[selected].tag;
+
+    // Return if a selection was made; If false is returned the selection was canceled
+    return showSelection;
 }

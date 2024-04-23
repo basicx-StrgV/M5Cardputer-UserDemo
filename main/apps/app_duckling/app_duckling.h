@@ -61,9 +61,9 @@ namespace MOONCAKE
             void _update_input();
             void _dialog(const std::string &message, bool can_skip);
             // Language
-            void _select_kb_lang();
+            bool _select_kb_lang();
             // Keyboard
-            void _select_kb_type();
+            bool _select_kb_type();
             void _ble_kb_init();
             void _ble_kb_update_infos();
             void _ble_kb_update_kb_input();
