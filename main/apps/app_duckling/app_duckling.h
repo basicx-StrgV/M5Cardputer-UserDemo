@@ -75,6 +75,8 @@ namespace MOONCAKE
             bool _usb_kb_mounted();
             // Payload
             std::string _select_payload();
+            void _handle_payload(std::list<std::string> payload);
+            void _write_string(std::string line, bool add_line_brake);
 
         public:
             void

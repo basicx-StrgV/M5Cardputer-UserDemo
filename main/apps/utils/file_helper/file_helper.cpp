@@ -9,7 +9,9 @@
  *
  */
 
+#include <list>
 #include <string>
+#include <limits.h>
 #include "file_helper.hpp"
 
 using namespace FILES::HELPER;
@@ -26,6 +28,24 @@ std::string FileReader::get_file_content(std::string file)
         while (fgets(text, 80, f))
         {
             fileContent += text;
+        }
+    }
+
+    return fileContent;
+}
+
+std::list<std::string> FileReader::get_file_content_lines(std::string file)
+{
+    std::list<std::string> fileContent;
+
+    // Read file content
+    FILE *f = fopen(file.c_str(), "r");
+    if (f != NULL)
+    {
+        char text[100];
+        while (fgets(text, INT_MAX, f))
+        {
+            fileContent.push_back(text);
         }
     }
 

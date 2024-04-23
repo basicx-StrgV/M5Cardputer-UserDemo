@@ -160,6 +160,8 @@ void AppDuckling::onRunning()
     if (_data.kb_type == kb_type_ble)
     {
         _ble_kb_update_infos();
+
+        // TODO: Check mounted status
     }
     else if (_data.kb_type == kb_type_usb)
     {
@@ -178,14 +180,13 @@ void AppDuckling::onRunning()
     // Only proceed if a payload was selected
     if (payload_file != "")
     {
-        if (_data.kb_type == kb_type_ble)
-        {
-            _ble_kb_update_kb_input();
-        }
-        else if (_data.kb_type == kb_type_usb)
-        {
-            _usb_kb_update_kb_input(0x00, 0x00);
-        }
+        // Get payload file path
+        std::string payload_file_path = (_data.working_dir + "/" + payload_file);
+
+        // Get payload file content
+        std::list<std::string> payload = FILES::HELPER::FileReader::get_file_content_lines(payload_file_path);
+
+        _handle_payload(payload);
     }
 }
 
