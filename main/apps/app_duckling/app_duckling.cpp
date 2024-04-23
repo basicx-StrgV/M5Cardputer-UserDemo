@@ -13,6 +13,7 @@
 #include "app_duckling.h"
 #include "spdlog/spdlog.h"
 #include "../utils/theme/theme_define.h"
+#include "../utils/file_helper/file_helper.hpp"
 
 using namespace MOONCAKE::APPS;
 
@@ -52,7 +53,7 @@ void AppDuckling::onResume()
 
         _data.working_dir = _sdcard->get_filepath("duckling");
 
-        // Check if workin dir exist
+        // Check if working directory exist
         if (!_sdcard->file_exists(_data.working_dir.c_str()))
         {
             spdlog::info("duckling folder not found, trying to create folder");
@@ -70,7 +71,7 @@ void AppDuckling::onResume()
             }
         }
 
-        // Init if working dir exists
+        // Init if working directory exists
         if (_data.has_working_dir)
         {
             std::list<std::string> file_list = _sdcard->get_dir_content(_data.working_dir.c_str());
@@ -100,18 +101,8 @@ void AppDuckling::onResume()
             // Load lang definition from selected file
             std::string langFilePath = (_data.working_dir + "/" + _data.kb_lang_file);
 
-            std::string fileContent;
-
             // Read file content
-            FILE *f = fopen(langFilePath.c_str(), "r");
-            if (f != NULL)
-            {
-                char text[100];
-                while (fgets(text, 80, f))
-                {
-                    fileContent += text;
-                }
-            }
+            std::string fileContent = FILES::HELPER::FileReader::get_file_content(langFilePath);
 
             // Load language definition from file
             _data.lang.load(fileContent);
@@ -120,6 +111,7 @@ void AppDuckling::onResume()
             if (!_select_kb_type())
                 return;
 
+            // Initialize selected keyboard
             if (_data.kb_type == kb_type_ble)
                 _ble_kb_init();
             else if (_data.kb_type == kb_type_usb)

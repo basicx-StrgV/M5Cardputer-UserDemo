@@ -48,7 +48,7 @@ void LangDefinition::load(std::string jsonContent)
         }
         catch (...)
         {
-            // Skip enty on error
+            // Skip entry on error
             continue;
         }
     }
