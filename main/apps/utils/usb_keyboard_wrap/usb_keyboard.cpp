@@ -195,3 +195,8 @@ void AppDuckling::_usb_kb_update_kb_input(uint8_t key, uint8_t modifier)
         _data.update_kb_time_count = millis();
     }
 }
+
+bool AppDuckling::_usb_kb_mounted()
+{
+    return (_current_state == _state_mounted);
+}

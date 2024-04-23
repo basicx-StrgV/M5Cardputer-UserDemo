@@ -48,6 +48,7 @@ namespace MOONCAKE
                 bool has_working_dir = true;
                 std::string working_dir;
                 std::list<std::string> lang_file_list;
+                std::list<std::string> payload_file_list;
                 // Language
                 std::string kb_lang_file = "";
                 DUCKLING::LANGUAGE::LangDefinition lang;
@@ -67,12 +68,17 @@ namespace MOONCAKE
             void _ble_kb_init();
             void _ble_kb_update_infos();
             void _ble_kb_update_kb_input();
+            // bool _ble_kb_mounted();
             void _usb_kb_init();
             void _usb_kb_update_infos();
             void _usb_kb_update_kb_input(uint8_t key, uint8_t modifier = 0x00);
+            bool _usb_kb_mounted();
+            // Payload
+            std::string _select_payload();
 
         public:
-            void onCreate() override;
+            void
+            onCreate() override;
             void onResume() override;
             void onRunning() override;
             void onDestroy() override;

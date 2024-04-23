@@ -14,6 +14,7 @@
 #include "spdlog/spdlog.h"
 #include "../utils/theme/theme_define.h"
 #include "../utils/file_helper/file_helper.hpp"
+#include "../utils/duckling_script/duckling_script.hpp"
 
 using namespace MOONCAKE::APPS;
 
@@ -76,7 +77,7 @@ void AppDuckling::onResume()
         {
             std::list<std::string> file_list = _sdcard->get_dir_content(_data.working_dir.c_str());
 
-            //  Get language definition files
+            //  Get relevant files from working directory
             for (std::string const &i : file_list)
             {
                 size_t extension_start_pos = i.find_last_of(".");
@@ -87,7 +88,13 @@ void AppDuckling::onResume()
 
                     if (file_type == "json")
                     {
+                        // Language definition files
                         _data.lang_file_list.push_back(i);
+                    }
+                    else if (file_type == "txt")
+                    {
+                        // Payload script files
+                        _data.payload_file_list.push_back(i);
                     }
                 }
             }
@@ -135,19 +142,48 @@ void AppDuckling::onRunning()
         spdlog::info("quit duckling");
 
         destroyApp();
+
+        return;
     }
 
-    if (_data.has_working_dir)
+    if (!_data.has_working_dir)
     {
+        // Cancel if working dir was not found
+        spdlog::info("quit duckling");
 
+        destroyApp();
+
+        return;
+    }
+
+    // Update keyboard info
+    if (_data.kb_type == kb_type_ble)
+    {
+        _ble_kb_update_infos();
+    }
+    else if (_data.kb_type == kb_type_usb)
+    {
+        _usb_kb_update_infos();
+
+        if (!_usb_kb_mounted())
+        {
+            // Wait until mounted
+            return;
+        }
+    }
+
+    // Get payload selection
+    std::string payload_file = _select_payload();
+
+    // Only proceed if a payload was selected
+    if (payload_file != "")
+    {
         if (_data.kb_type == kb_type_ble)
         {
-            _ble_kb_update_infos();
             _ble_kb_update_kb_input();
         }
         else if (_data.kb_type == kb_type_usb)
         {
-            _usb_kb_update_infos();
             _usb_kb_update_kb_input(0x00, 0x00);
         }
     }
