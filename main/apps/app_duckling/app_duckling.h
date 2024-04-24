@@ -73,14 +73,15 @@ namespace MOONCAKE
             void _usb_kb_update_infos();
             void _usb_kb_update_kb_input(uint8_t key, uint8_t modifier = 0x00);
             bool _usb_kb_mounted();
+            bool _usb_kb_next_input();
             // Payload
             std::string _select_payload();
             void _handle_payload(std::list<std::string> payload);
             void _write_string(std::string line, bool add_line_brake);
+            void _print_key(std::string key);
 
         public:
-            void
-            onCreate() override;
+            void onCreate() override;
             void onResume() override;
             void onRunning() override;
             void onDestroy() override;

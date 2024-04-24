@@ -182,21 +182,35 @@ void AppDuckling::_usb_kb_update_kb_input(uint8_t key, uint8_t modifier)
     if (_current_state != _state_mounted)
         return;
 
-    if (millis() - _data.update_kb_time_count > 10)
+    while (!_usb_kb_next_input())
     {
-        memset(_input_buffer, 0, 6);
-
-        // Buffer [0] is for modifier and [1] - [5] for other keys
-        _input_buffer[0] = modifier;
-        _input_buffer[1] = key;
-
-        usb_kb_wrap_report(_input_buffer);
-
-        _data.update_kb_time_count = millis();
+        // Wait until the next input is allowed
+        ets_delay_us(1000);
     }
+
+    memset(_input_buffer, 0, 6);
+
+    // Buffer [0] is for the modifier and [1] - [5] for other keys
+    _input_buffer[0] = modifier;
+    _input_buffer[1] = key;
+
+    usb_kb_wrap_report(_input_buffer);
+
+    _data.update_kb_time_count = millis();
 }
 
 bool AppDuckling::_usb_kb_mounted()
 {
     return (_current_state == _state_mounted);
+}
+
+bool AppDuckling::_usb_kb_next_input()
+{
+    // Faster times will result in skipped inputs
+    if (millis() - _data.update_kb_time_count > 20)
+    {
+        return true;
+    }
+
+    return false;
 }

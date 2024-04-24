@@ -66,15 +66,28 @@ void MOONCAKE::APPS::AppDuckling::_handle_payload(std::list<std::string> payload
         }
 
         // Handle strings -------------------------------------------------------------------
-        if (line.rfind("STRING", 0) != std::string::npos && line.size() > 8)
+        // Handle system keys ---------------------------------------------------------------
+        if (line.rfind("STRING ", 0) != std::string::npos && line.size() > 8)
         {
             // Write the string, after the keyword, plus one space inbetween
             _write_string(line.substr(7), false);
+            continue;
         }
-        else if (line.rfind("STRINGLN", 0) != std::string::npos && line.size() > 10)
+        else if (line.rfind("STRINGLN ", 0) != std::string::npos && line.size() > 10)
         {
             // Write the string, after the keyword, plus one space inbetween
             _write_string(line.substr(9), true);
+            continue;
+        }
+
+        // Handle system keys ---------------------------------------------------------------
+        for (std::string const &isk : system_keys)
+        {
+            if (line.rfind(isk, 0) != std::string::npos && line.size() >= isk.size())
+            {
+                _print_key(isk);
+                continue;
+            }
         }
     }
 }
@@ -85,31 +98,25 @@ void MOONCAKE::APPS::AppDuckling::_write_string(std::string line, bool add_line_
     {
         std::string key(1, i);
 
-        DUCKLING::LANGUAGE::CodeInfo_t code_info = _data.lang.get_code_info(key);
-
-        if (_data.kb_type == kb_type_ble)
-        {
-            _ble_kb_update_kb_input();
-        }
-        else if (_data.kb_type == kb_type_usb)
-        {
-            _usb_kb_update_kb_input(code_info.keycode, code_info.modifier_keys);
-        }
-
-        // ets_delay_us(100);
+        _print_key(key);
     }
 
     if (add_line_brake)
     {
-        DUCKLING::LANGUAGE::CodeInfo_t code_info = _data.lang.get_code_info("ENTER");
+        _print_key("ENTER");
+    }
+}
 
-        if (_data.kb_type == kb_type_ble)
-        {
-            _ble_kb_update_kb_input();
-        }
-        else if (_data.kb_type == kb_type_usb)
-        {
-            _usb_kb_update_kb_input(code_info.keycode, code_info.modifier_keys);
-        }
+void MOONCAKE::APPS::AppDuckling::_print_key(std::string key)
+{
+    DUCKLING::LANGUAGE::CodeInfo_t code_info = _data.lang.get_code_info(key);
+
+    if (_data.kb_type == kb_type_ble)
+    {
+        _ble_kb_update_kb_input();
+    }
+    else if (_data.kb_type == kb_type_usb)
+    {
+        _usb_kb_update_kb_input(code_info.keycode, code_info.modifier_keys);
     }
 }
