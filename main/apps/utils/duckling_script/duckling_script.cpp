@@ -37,6 +37,29 @@ void MOONCAKE::APPS::AppDuckling::_handle_payload(std::list<std::string> payload
         // Get the timmrd down payload line
         std::string line = trim(i);
 
+        // Handle delay ---------------------------------------------------------------------
+        if (line.rfind("DELAY ") != std::string::npos && line.size() > 6)
+        {
+            std::string delay_string = line.substr(6);
+
+            try
+            {
+                uint32_t delay_value_ms = std::stoi(delay_string);
+
+                if (delay_value_ms > 0)
+                {
+                    ets_delay_us(delay_value_ms * 1000);
+                }
+            }
+            catch (...)
+            {
+                continue;
+            }
+
+            // Skip to next line
+            continue;
+        }
+
         // Handle comments ------------------------------------------------------------------
         if (line.rfind("END_REM") != std::string::npos)
         {
@@ -66,7 +89,6 @@ void MOONCAKE::APPS::AppDuckling::_handle_payload(std::list<std::string> payload
         }
 
         // Handle strings -------------------------------------------------------------------
-        // Handle system keys ---------------------------------------------------------------
         if (line.rfind("STRING ", 0) != std::string::npos && line.size() > 8)
         {
             // Write the string, after the keyword, plus one space inbetween
