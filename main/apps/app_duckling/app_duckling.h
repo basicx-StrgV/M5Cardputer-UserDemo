@@ -79,6 +79,7 @@ namespace MOONCAKE
             void _handle_payload(std::list<std::string> payload);
             void _write_string(std::string line, bool add_line_brake);
             void _print_key(std::string key);
+            void _print_key(std::string key, std::string modifier);
 
         public:
             void onCreate() override;

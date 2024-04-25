@@ -80,15 +80,36 @@ void MOONCAKE::APPS::AppDuckling::_handle_payload(std::list<std::string> payload
             continue;
         }
 
+        bool line_handled = false;
+
         // Handle system keys ---------------------------------------------------------------
         for (std::string const &isk : system_keys)
         {
             if (line.rfind(isk, 0) != std::string::npos && line.size() >= isk.size())
             {
                 _print_key(isk);
-                continue;
+                line_handled = true;
+                break;
             }
         }
+
+        if (line_handled)
+            continue;
+
+        // Handle basic modifire keys -------------------------------------------------------
+        for (std::string const &imk : modifier_keys)
+        {
+            // Check for thr basic modifier and if there is a key after the modifier
+            if (line.rfind(imk, 0) != std::string::npos && line.size() > (imk.size() + 1))
+            {
+                _print_key(line.substr(imk.size() + 1), imk);
+                line_handled = true;
+                break;
+            }
+        }
+
+        if (line_handled)
+            continue;
     }
 }
 
@@ -118,5 +139,28 @@ void MOONCAKE::APPS::AppDuckling::_print_key(std::string key)
     else if (_data.kb_type == kb_type_usb)
     {
         _usb_kb_update_kb_input(code_info.keycode, code_info.modifier_keys);
+    }
+}
+
+void MOONCAKE::APPS::AppDuckling::_print_key(std::string key, std::string modifier)
+{
+    spdlog::info("Printing key: {}", key);
+    spdlog::info("Printing modifier: {}", modifier);
+
+    DUCKLING::LANGUAGE::CodeInfo_t code_info_key = _data.lang.get_code_info(key);
+    DUCKLING::LANGUAGE::CodeInfo_t code_info_modifier = _data.lang.get_code_info(modifier);
+
+    u_int8_t _modifier = 0;
+
+    _modifier |= code_info_key.modifier_keys;
+    _modifier |= code_info_modifier.modifier_keys;
+
+    if (_data.kb_type == kb_type_ble)
+    {
+        _ble_kb_update_kb_input();
+    }
+    else if (_data.kb_type == kb_type_usb)
+    {
+        _usb_kb_update_kb_input(code_info_key.keycode, _modifier);
     }
 }
