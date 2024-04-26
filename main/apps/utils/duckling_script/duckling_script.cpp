@@ -132,6 +132,21 @@ void MOONCAKE::APPS::AppDuckling::_handle_payload(std::list<std::string> payload
 
         if (line_handled)
             continue;
+
+        // Handle lock keys -----------------------------------------------------------------
+        for (std::string const &ilk : lock_keys)
+        {
+            // Check for thr basic modifier and if there is a key after the modifier
+            if (line.rfind(ilk, 0) != std::string::npos && line.size() >= ilk.size())
+            {
+                _print_key(ilk);
+                line_handled = true;
+                break;
+            }
+        }
+
+        if (line_handled)
+            continue;
     }
 }
 
@@ -166,9 +181,6 @@ void MOONCAKE::APPS::AppDuckling::_print_key(std::string key)
 
 void MOONCAKE::APPS::AppDuckling::_print_key(std::string key, std::string modifier)
 {
-    spdlog::info("Printing key: {}", key);
-    spdlog::info("Printing modifier: {}", modifier);
-
     DUCKLING::LANGUAGE::CodeInfo_t code_info_key = _data.lang.get_code_info(key);
     DUCKLING::LANGUAGE::CodeInfo_t code_info_modifier = _data.lang.get_code_info(modifier);
 
